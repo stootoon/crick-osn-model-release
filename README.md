@@ -15,6 +15,10 @@ It then generates the inputs using the subset of the `gamp5` data with concentra
 The results are in `input.p` in that folder.
 3. Run the classifiers for all sizes, for a given permutation `python run_decoding_delay.py ../data/model-osn-data/gamp5/ 100 --which_perm=0`
 4. Collect the classification results using `python run_decoding_delay.py ../data/model-osn-data/gamp5/ 100 --collect .` 
-This produces `output.collected.p` in the 
+This produces `output.collected.p` in the directory data/decoding_delay_gamp5_conc100
 
 ## Decoding at multiple concentrations
+- To run concentration decoding on a dataset, say `gamp5`, run `python classify.py data/model-osn-data/gamp5`
+- To run delay and concentration decoding, use the `--delay` flag: `python classify.py data/model-osn-data/gamp5 --delay`
+- To run the shuffled setting, add `--shuf`, e.g. flag: `python classify.py data/model-osn-data/gamp5 --delay --shuf`
+

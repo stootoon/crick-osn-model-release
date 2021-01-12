@@ -7,20 +7,25 @@ import pickle
 import logging
 
 logging.basicConfig()
-
 logger = logging.getLogger("classify")
 logger.setLevel(logging.INFO)
+
+base_dir = os.path.split(os.path.abspath(__file__))[0]
+data_dir = os.path.join(base_dir, "data")
+
+get_output_root = lambda osn_data_dir: os.path.join(data_dir, "decoding-delay-conc", os.path.normpath(osn_data_dir).split("/")[-1])
+
 
 from sklearn.svm import LinearSVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit
     
-def generate_dataset(data_dir, which_label, first_trial=5, start_time = 0.1, window_size = 2,
+def generate_dataset(osn_data_dir, which_label, first_trial=5, start_time = 0.1, window_size = 2,
                      ca2exp=2, ca2tau=0.15, labels_only = False):
-    logger.info(f"Loading OSN data from {data_dir}.")
+    logger.info(f"Loading OSN data from {osn_data_dir}.")
     records = []
-    for f in [g for g in os.scandir(data_dir) if g.name.endswith(".json")]:
-        file_path = os.path.join(data_dir, f.name)
+    for f in [g for g in os.scandir(osn_data_dir) if g.name.endswith(".json")]:
+        file_path = os.path.join(osn_data_dir, f.name)
         with open(file_path, "rb") as fp:
             record = json.load(fp)
         record.update({"file":f.name, "folder":f.name.strip(".json")})
@@ -44,7 +49,7 @@ def generate_dataset(data_dir, which_label, first_trial=5, start_time = 0.1, win
     assert len(t_trial) == 1, f"Expected exactly one value for t_trial, found {len(t_trial)}."
     t_trial = list(t_trial)[0]
     
-    load_data = lambda which_params: {fld:np.load(os.path.join(data_dir, which_params, fld+".p"), allow_pickle=True) for fld in ["t", "stim", "counts"]}
+    load_data = lambda which_params: {fld:np.load(os.path.join(osn_data_dir, which_params, fld+".p"), allow_pickle=True) for fld in ["t", "stim", "counts"]}
     
     params = sorted(list(df_params.folder.values))
     
@@ -152,50 +157,76 @@ def classify(X, y, C_vals = [10**i for i in range(-4,5,1)], seed=0, n_cv = 10, s
             cm1[labels.index(y_true), labels.index(y_pred)] += 1
         print(cm1)
         confusion_matrix+= cm1
-        #ConnectionRefusedErrorconfusion_matrix[labels.index(yi), labels.index(yp[i])] += 1
+
     print("Confusion matrix:")
     print(confusion_matrix)
     return confusion_matrix, labels
     
 if __name__ == "__main__":
-    from argparse import ArgumentParser
+    from collections import namedtuple
+    ParserOpt = namedtuple('ParserOpt', 'name alias type default help')
+    parser_opts = [
+        ParserOpt(name="seed",             alias=None,    type=int,   default=0,        help="Random seed to use."),
+        ParserOpt(name="first_trial",      alias="1tr",   type=int,   default=5,        help="The first trial to use for decoding"),
+        ParserOpt(name="start_time",       alias="t0",    type=float, default=0.1,      help="Time within each trial to start the count"),
+        ParserOpt(name="window_size",      alias="wnd",   type=float, default=2,        help="Window size in seconds to sum over"),
+        ParserOpt(name="ca2tau",           alias=None,    type=float, default=0.15,     help="Ca2+ filter time constant in seconds"),
+        ParserOpt(name="ca2exp",           alias=None,    type=float, default=2,        help="Exponent applied to the counts before convolving with Ca2+ filter"),
+        ParserOpt(name="n_cv",             alias="ncv",   type=int,   default=10,       help="Number of cross-validation runs"),
+        ParserOpt(name="C_vals",           alias="C",     type=str,   default="-4,4,1", help="Minimum,maximum, and step of powers of 10 to try for C"),
+        ParserOpt(name="scaling",          alias="scal",  type=str,   default="none",   help="Whether to apply standard scaling to the 'rows', 'columns', or 'none' for not at all")
+    ]
     
+    from argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument("data_dir",           type=str,                     help="Root folder containing the data for each glomerulus")
-    parser.add_argument("--prefix",           type=str,   default="",       help="The prefix to use for this run.")
+    parser.add_argument("osn_data_dir",       type=str,                     help="Root folder containing the data for each glomerulus")
     parser.add_argument("--delay",            action="store_true",          help="Whether to decode delay and concentration instead of just concentration")
     parser.add_argument("--shuf",             action="store_true",          help="Whether to compute the shuffled performance")
-    parser.add_argument("--seed",             type=int,   default=0,        help="Random seed to use.")
-    parser.add_argument("--first_trial",      type=int,   default=5,        help="The first trial to use for decoding")
-    parser.add_argument("--start_time",       type=float, default=0.1,      help="Time within each trial to start the count")
-    parser.add_argument("--window_size",      type=float, default=2,        help="Window size in seconds to sum over")
-    parser.add_argument("--ca2tau",           type=float, default=0.15,     help="Ca2+ filter time constant in seconds.")
-    parser.add_argument("--ca2exp",           type=float, default=2,        help="Exponent applied to the counts before convolving with Ca2+ filter.")
-    parser.add_argument("--n_cv",             type=int,   default=10,       help="Number of cross-validation runs.")
-    parser.add_argument("--C_vals",           type=str,   default="-4,4,1", help="Minimum,maximum, and step of powers of 10 to try for C.")
     parser.add_argument("--gridcv_verbosity", type=int,   default=0,        help="Verbosity of GridSearchCV.")
-    parser.add_argument("--scaling",          type=str,   default="none",   help="Whether to apply standard scaling to the 'rows', 'columns', or 'none' for not at all (default).")    
+    for popt in parser_opts:
+        parser.add_argument(f"--{popt.name}", type=popt.type, default=popt.default, help=popt.help + f". (Default: {popt.default})")
     args = parser.parse_args()
     print(f"Running with {args=}")
         
-    prefix = args.prefix or args.data_dir
-    print(f"Using {prefix=}")
+    non_defaults = []
+    for popt in parser_opts:
+        val = args.__getattribute__(popt.name)
+        if val != popt.default:
+            alias = popt.alias if popt.alias else popt.name
+            non_defaults.append(f"{alias}{val}")
+    subdir="_".join(non_defaults) if len(non_defaults) else "default"
+    print(f"Using {subdir=}")
 
-    name = "_".join([prefix+"_", f"{'delay.' if args.delay else ''}conc_{'shuf' if args.shuf else 'orig'}_seed{args.seed}"])
-    logger.info(f"{name=}")
+    name = f"{'delay.' if args.delay else ''}conc_{'shuf' if args.shuf else 'orig'}"
+    print(f"{name=}")
     
     which_label = "conc" if not args.delay else "delay.conc"
-    if not os.path.isfile(f"{name}.input.p"):
-        X, y, params = generate_dataset(args.data_dir, which_label,
+
+    output_root = get_output_root(args.osn_data_dir)
+    print(f"{output_root=}")
+
+    output_dir = os.path.join(output_root, subdir)
+    print(f"{output_dir=}")
+    if not os.path.isdir(output_dir):
+        print(f"{output_dir} not found, creating.")
+        os.makedirs(output_dir, exist_ok = True)
+
+    input_file = os.path.join(output_dir, f"{'delay.' if args.delay else ''}conc.input.p")
+    print(f"{input_file=}")
+    
+    if not os.path.isfile(input_file):
+        print(f"{input_file} not found, so generating it.")
+        X, y, params = generate_dataset(args.osn_data_dir, which_label,
                                         first_trial = args.first_trial,
                                         start_time  = args.start_time,
                                         window_size = args.window_size,
                                         ca2exp      = args.ca2exp,
                                         ca2tau      = args.ca2tau)
-        with open(f"{name}.input.p", "wb") as f:
+        with open(input_file, "wb") as f:
             pickle.dump({"X":X, "y":y, "params":params}, f)
     else:
-        with open(f"{name}.input.p", "rb") as f:
+        print(f"{input_file} found, loading classifier inputs from it.")
+        with open(input_file, "rb") as f:
             data = pickle.load(f)
         X,y,params = data["X"], data["y"], data["params"]
             
@@ -214,10 +245,11 @@ if __name__ == "__main__":
     print("{}: {:1.3f}".format("Mean accuracy", mean_acc + 1e-8))
     
     to_save = {"X":X, "y":y, "labels":labels, "params":params, "args":args, "confusion_matrix":confusion_matrix}
-    file_name = f"{name}.p"
-    with open(file_name, "wb") as out_file:
+
+    output_file = os.path.join(output_dir, f"{name}.p")
+    with open(output_file, "wb") as out_file:
         pickle.dump(to_save, out_file)
-    print(f"Saved results to {file_name}.")
+    print(f"Saved results to {output_file}.")
         
     print("ALLDONE")
     
