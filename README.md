@@ -21,4 +21,7 @@ This produces `output.collected.p` in the directory data/decoding_delay_gamp5_co
 - To run concentration decoding on a dataset, say `gamp5`, run `python classify.py data/model-osn-data/gamp5`
 - To run delay and concentration decoding, use the `--delay` flag: `python classify.py data/model-osn-data/gamp5 --delay`
 - To run the shuffled setting, add `--shuf`, e.g. flag: `python classify.py data/model-osn-data/gamp5 --delay --shuf`
+- The input and output of these models will be written to `data/decoding-delay-conc/gamp5/default`
+- A number of parameters can be set to custom values. To see a list, run `python classify.py --help`.
+- For example, to classify concentrations with Ca2+ exponent set to 1.0, use `python classify.py data/model-osn-data/gamp5 --ca2exp 1`
 
