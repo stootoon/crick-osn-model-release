@@ -9,9 +9,12 @@ The folder `model-osn-data/gamp5` now contains one folder for each parameter jso
 ## Decoding a single concentration
 ### Generating classifier inputs
 1. Change to the `multiple-glomeruli-single-amp` directory.
-2. Generate the classifer inputs by ```python run_decoding_delay.py 100 --dataset ../model-osn-data/gamp5 --which_perm -1```
-This generates the inputs using the subset of the `gamp5` data with concentration 100. 
-3. Run the classifiers for all sizes, for a given permutation ```python run_decoding_delay.py 100 --which_perm=0```
-4. Collect the classification results using ```python run_decoding_delay.py 100 --collect .``` This produces `decoding_delay_conc100.output.collected.p`
+2. Generate the classifer inputs by `python run_decoding_delay.py ../data/model-osn-data/gamp5/ 100 --which_perm -1`
+This will first generate the concentration directory, `data/decoding_delay_gamp5_conc100`
+It then generates the inputs using the subset of the `gamp5` data with concentration 100. 
+The results are in `input.p` in that folder.
+3. Run the classifiers for all sizes, for a given permutation `python run_decoding_delay.py ../data/model-osn-data/gamp5/ 100 --which_perm=0`
+4. Collect the classification results using `python run_decoding_delay.py ../data/model-osn-data/gamp5/ 100 --collect .` 
+This produces `output.collected.p` in the 
 
 ## Decoding at multiple concentrations

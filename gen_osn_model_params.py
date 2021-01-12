@@ -46,13 +46,11 @@ print(defaults)
 # They're specified as a center plus the width of the uniform interval around the center
 # from which to generate variation.
 glom_params = { 
-    "tau_chem":(0.075, args.var_scale),
-    "tau_osn": (0.075, args.var_scale),
-    #"sd":      (0.25,  args.var_scale),
-    #"sd":      (0.5,   0),
+    "tau_chem":(0.075,          args.var_scale),
+    "tau_osn": (0.075,          args.var_scale),
     "sd":      (args.glom_sd,   args.glom_sd_var),        
-    "th":      (2,     args.var_scale),
-    "amp":     (args.glom_amp,    args.var_scale),
+    "th":      (2,              args.var_scale),
+    "amp":     (args.glom_amp,  args.var_scale),
 }
 print("Glomerular parameters:")
 print(glom_params)
@@ -62,8 +60,9 @@ os.system(f"mkdir -p {args.outputdir}")
 
 # Each one of these will be a glomerulus, with its parameters randomly generated from above.
 for seed in range(args.n_glom):
-    p = {fld:cntr * (1 + amp*(2*np.random.rand() - 1)) for fld, (cntr, amp) in glom_params.items()}    
-    p["seed"] = seed    
+    np.random.seed(seed)
+    p = {fld:cntr * (1 + amp*(2*np.random.rand() - 1)) for fld, (cntr, amp) in glom_params.items()}
+    p["seed"] = seed        
     p.update(defaults)
     file_name = f"params{seed}.json"
     full_path = os.path.join(args.outputdir, file_name)
