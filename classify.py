@@ -24,7 +24,7 @@ def generate_dataset(osn_data_dir, which_label, first_trial=5, start_time = 0.1,
                      ca2exp=2, ca2tau=0.15, labels_only = False):
     logger.info(f"Loading OSN data from {osn_data_dir}.")
     records = []
-    for f in [g for g in os.scandir(osn_data_dir) if g.name.endswith(".json")]:
+    for f in [g for g in os.scandir(osn_data_dir) if g.name.startswith("params") and g.name.endswith(".json")]:
         file_path = os.path.join(osn_data_dir, f.name)
         with open(file_path, "rb") as fp:
             record = json.load(fp)
