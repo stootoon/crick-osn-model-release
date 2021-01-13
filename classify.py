@@ -29,6 +29,8 @@ def print_confusion_matrix(cm, zero_char = "."):
             print(ch + " "*(n - len(ch) + 1), end="")
         print("")
 
+confusion_matrix_as_ranks = lambda cm: np.array([[np.sum(cmi>xi)+1 if xi else np.inf for xi in cmi] for cmi in np.array(cm)])
+
 def generate_dataset(osn_data_dir, which_label, first_trial=5, start_time = 0.1, window_size = 2,
                      ca2exp=2, ca2tau=0.15, labels_only = False):
     logger.info(f"Loading OSN data from {osn_data_dir}.")
