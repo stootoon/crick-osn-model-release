@@ -55,8 +55,14 @@ glom_params = {
 print("Glomerular parameters:")
 print(glom_params)
 
-print(f"Creating target directory {args.outputdir}")
-os.system(f"mkdir -p {args.outputdir}")
+if os.path.isdir(args.outputdir):
+    resp = input(f"\nDirectory {args.outputdir} exists. Parameter files may be overwritten. Type 'yes' to continue: ")
+    if resp != "yes":
+        print("Aborted.")
+        exit(0)
+else:
+    print(f"Creating target directory {args.outputdir}")
+    os.makedirs(args.outputdir, exist_ok = True)    
 
 # Each one of these will be a glomerulus, with its parameters randomly generated from above.
 for seed in range(args.n_glom):
@@ -70,5 +76,19 @@ for seed in range(args.n_glom):
         json.dump(p, f)
         print(f"Wrote {full_path}.")
 
+# Also write the parameters that that were used to generate the run parameters.
+with open(input_args_file:=os.path.join(args.outputdir, "input_args.json"), "w") as f:
+    input_args = {name:args.__getattribute__(name) for (name, *rest) in opt_args}
+    json.dump(input_args, f)
+    print(f"Wrote {input_args_file}.")
 
+with open(base_params_file:=os.path.join(args.outputdir, "base_params.json"), "w") as f:
+    json.dump(defaults, f)
+    print(f"Wrote {base_params_file}.")
+        
+with open(glom_params_file:=os.path.join(args.outputdir, "glom_params.json"), "w") as f:
+    json.dump(glom_params, f)
+    print(f"Wrote {glom_params_file}.")
+
+    
         
