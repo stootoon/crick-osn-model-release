@@ -19,7 +19,16 @@ get_output_root = lambda osn_data_dir: os.path.join(data_dir, "decoding-delay-co
 from sklearn.svm import LinearSVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit
-    
+
+def print_confusion_matrix(cm, zero_char = "."):
+    row_sum = sum(cm[0])
+    n = len(str(row_sum))
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            ch = str(cm[i,j]) if cm[i,j] else "."
+            print(ch + " "*(n - len(ch) + 1), end="")
+        print("")
+
 def generate_dataset(osn_data_dir, which_label, first_trial=5, start_time = 0.1, window_size = 2,
                      ca2exp=2, ca2tau=0.15, labels_only = False):
     logger.info(f"Loading OSN data from {osn_data_dir}.")
@@ -150,17 +159,19 @@ def classify(X, y, C_vals = [10**i for i in range(-4,5,1)], seed=0, n_cv = 10, s
         yp = search.predict(X_tst)
         acc.append(np.mean(yp==y_tst))
         best_params_str = " ".join([f"{fld:>12s}={format_val(val):<5s}" for fld,val  in search.best_params_.items()])
-        logger.info(f"{best_params_str:>40s}: {acc[-1]:>1.3f}")
+        logger.info(f"CV {icv+1:>3d}/{n_cv:<3d} {best_params_str:>40s}: {acc[-1]:>1.3f}")
 
         cm1 = 0* confusion_matrix
         for y_true, y_pred in zip(y_tst, yp):
             cm1[labels.index(y_true), labels.index(y_pred)] += 1
-        print(cm1)
+
+        print(f"CV trial {icv+1}/{n_cv} confusion matrix:")
+        print_confusion_matrix(cm1)
         confusion_matrix+= cm1
 
-    print("Confusion matrix:")
-    print(confusion_matrix)
-    return confusion_matrix, labels
+    print("\nOverall confusion matrix:")
+    print_confusion_matrix(confusion_matrix)
+    return confusion_matrix, labels, search
     
 if __name__ == "__main__":
     from collections import namedtuple
@@ -238,8 +249,8 @@ if __name__ == "__main__":
     C_vals = [10**val for val in np.arange(min_C, max_C+1, C_step)]
     print(f"Using {C_vals=}")
 
-    confusion_matrix, labels = classify(X, y, C_vals, n_cv = args.n_cv, shuf=args.shuf, seed = args.seed,
-                                        scaling = args.scaling, gridcv_verbosity=args.gridcv_verbosity)
+    confusion_matrix, labels, search = classify(X, y, C_vals, n_cv = args.n_cv, shuf=args.shuf, seed = args.seed,
+                                                scaling = args.scaling, gridcv_verbosity=args.gridcv_verbosity)
     
     mean_acc = np.trace(confusion_matrix)/np.sum(confusion_matrix)
     print("{}: {:1.3f}".format("Mean accuracy", mean_acc + 1e-8))
