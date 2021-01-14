@@ -4,8 +4,8 @@ echo "Classifying CONCENTRATION."
 python -u classify.py "$@"
 echo "Classifying CONCENTRATION (SHUFFLED)."
 python -u classify.py "$@" --shuf
-echo "Classifying CONCENTRATION & DELAY."
-python -u classify.py "$@" --delay
-echo "Classifying CONCENTRATION & DELAY (SHUFFLED)."
-python -u classify.py "$@" --delay --shuf
+echo "Classifying CONCENTRATION & PPI."
+python -u classify.py "$@" --ppi
+echo "Classifying CONCENTRATION & PPI (SHUFFLED)."
+python -u classify.py "$@" --ppi --shuf
 
