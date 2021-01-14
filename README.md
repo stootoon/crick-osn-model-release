@@ -1,7 +1,6 @@
 # Model for olfactory sensory neurons 
 This repository contains the code to generate the data and produce figures X of Ackels et al. 2021.
 ## Generating data for multiple glomeruli
-For example, to generate data for a
 1. Generate the parameters by running ```python gen_osn_model_params.py --outputdir model-osn-data/gamp5 --glom_amp 5```
 2. Run the model for each of the parameter settings by ```cd model-osn-data/gamp5; python run_for_params.py params0.json```
 The folder `model-osn-data/gamp5` now contains one folder for each parameter json file, containing the spike counts.
@@ -26,6 +25,7 @@ Classifying PPI and concentration is run by calling the code in `classify.py` di
 - For example, to classify concentrations with Ca2+ exponent set to 1.0, use `python classify.py data/model-osn-data/gamp5 --ca2exp 1`
 - The results will be written to folders whose names indicate the parameters to `classify.py` that were changed from their default values.
 - For example, the results of runs with `--ca2exp 1`  will be written to `data/decoding-ppi-conc/gamp5/ca2exp1.0`
+
 To plot the figures showing PPI and concentration decoding performance, run the notebook `make_figure_decoding_ppi_conc.ipynb`.
 
 
