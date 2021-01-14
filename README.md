@@ -6,8 +6,8 @@ For example, to generate data for a
 2. Run the model for each of the parameter settings by ```cd model-osn-data/gamp5; python run_for_params.py params0.json```
 The folder `model-osn-data/gamp5` now contains one folder for each parameter json file, containing the spike counts.
 
-## Decoding at single concentration
-1. Change to the `decoding-dleay` directory.
+## Decoding PPI using different numbers of glomeruli
+1. Change to the `decoding-delay` directory.
 2. Generate the classifer inputs by `python run_decoding_delay.py ../data/model-osn-data/gamp5/ 100 --which_perm -1`
 - This will first generate the concentration directory, `data/decoding_delay/gamp5_conc100`
 - It then generates the inputs using the subset of the `gamp5` data with concentration 100. 
@@ -16,7 +16,7 @@ The folder `model-osn-data/gamp5` now contains one folder for each parameter jso
 4. Collect the classification results using `python run_decoding_delay.py ../data/model-osn-data/gamp5/ 100 --collect` 
 - This produces `output.collected.p` in the directory data/decoding_delay/gamp5_conc100
 5. Run the notebook `make_figure_decoding_delay.ipynb` to produce the figure showing decoding accuracy vs # glomeruli used.
-## Decoding at multiple concentrations
+## Decoding PPI and concentration using all glomeruli
 - To run concentration decoding on a dataset, say `gamp5`, run `python classify.py data/model-osn-data/gamp5`
 - To run delay and concentration decoding, use the `--delay` flag: `python classify.py data/model-osn-data/gamp5 --delay`
 - To run the shuffled setting, add `--shuf`, e.g. flag: `python classify.py data/model-osn-data/gamp5 --delay --shuf`

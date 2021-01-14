@@ -11,7 +11,7 @@ from classify import generate_dataset, classify
 data_dir = os.path.join(base_dir, "data")
 
 get_dataset_name         = lambda dataset_path: os.path.normpath(dataset_path).split("/")[-1]
-get_conc_dir             = lambda dataset_path, which_conc: os.path.join(data_dir, f"decoding-delay/{get_dataset_name(dataset_path)}_conc{which_conc}")
+get_conc_dir             = lambda dataset_path, which_conc: os.path.join(data_dir, f"decoding-ppi/{get_dataset_name(dataset_path)}_conc{which_conc}")
 get_input_file_name      = lambda dataset_path, which_conc: os.path.join(get_conc_dir(dataset_path, which_conc), "input.p")
 get_output_file_name     = lambda dataset_path, which_conc, which_perm: os.path.join(get_conc_dir(dataset_path, which_conc), f"output.{which_perm:03d}.p")
 get_collection_file_name = lambda dataset_path, which_conc: os.path.join(get_conc_dir(dataset_path, which_conc), f"output.collected.p")
@@ -19,7 +19,7 @@ get_collection_file_name = lambda dataset_path, which_conc: os.path.join(get_con
 acc_from_cm              = lambda cm: np.trace(cm)/np.sum(cm) # Accuracy from confusion matrix
 
 if __name__ == "__main__":
-    parser = ArgumentParser("Generate the delay decoding results.") 
+    parser = ArgumentParser("Generate the PPI decoding results.") 
     parser.add_argument("dataset",       type=str, default="model_osn_data_two_pulse_multiple_amps_gamp5", help="Folder containing the glomerular spike counts.")   
     parser.add_argument("which_conc",    type=str,                   help= "Which concentration to use, as a zero padded string e.g. '050', '100', etc.")
     parser.add_argument("--which_sizes", type=str, default="1,-1,1", help="Which sizes to run, in 'First,Last,Step' format. -1 means last.")
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         
         print(f"GENERATING CLASSIFER INPUTS.")
         print(f"Determining labels for conc={args.which_conc}.")
-        _,y,_ = generate_dataset(args.dataset, "delay.conc", labels_only = True)
+        _,y,_ = generate_dataset(args.dataset, "ppi.conc", labels_only = True)
         labels = sorted(list(set(y)))
         concs_avail = sorted(list(set([lab.split(".")[1] for lab in labels])))
         print(f"{concs_avail=}")
@@ -49,7 +49,7 @@ if __name__ == "__main__":
             raise ValueError(f"Desired concentration {args.which_conc} is not available.")
     
         print(f"Generating dataset for conc={args.which_conc}.")        
-        X, y, params = generate_dataset(args.dataset, "delay.conc", labels_only = False)
+        X, y, params = generate_dataset(args.dataset, "ppi.conc", labels_only = False)
         
         ind_conc = [i for i,lab in enumerate(y) if lab.endswith(args.which_conc)]
         X_conc = X[ind_conc]
