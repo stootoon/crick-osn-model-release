@@ -51,10 +51,18 @@ def generate_dataset(osn_data_dir, which_label, first_trial=5, start_time = 0.1,
     logger.info(f"{n_trials=}")
     if n_trials< first_trial:
         raise ValueError("First trial {first_trial} > {n_trials=}")
+    print(f"{n_trials=}")
+    print(f"{first_trial=}")        
 
     dt = set(df_params.dt.values)
     assert len(dt) == 1, f"Expected exactly one value for dt, found {len(dt)}."
     dt = list(dt)[0]
+    print(f"{dt=}")
+
+    n_osn = set(df_params.n_osn.values)
+    assert len(n_osn) == 1, f"Expected exactly one value for n_osn, found {len(n_osn)}."
+    n_osn = list(dt)[0]
+    print(f"{n_osn=}")
     
     t_trial = set(df_params.t_trial.values)
     assert len(t_trial) == 1, f"Expected exactly one value for t_trial, found {len(t_trial)}."
@@ -88,7 +96,7 @@ def generate_dataset(osn_data_dir, which_label, first_trial=5, start_time = 0.1,
     
     t_ca2       = np.arange(0,t_trial,dt)
     ca2_filter  = t_ca2*np.exp(-t_ca2/ca2tau)
-    ca2_fun     = lambda counts: np.convolve(counts**ca2exp, ca2_filter, 'full')[:len(counts)]    
+    ca2_fun     = lambda counts: np.convolve((counts/n_osn)**ca2exp, ca2_filter, 'full')[:len(counts)]    
     summary_fun = lambda counts: np.sum(ca2_fun(counts).reshape(n_trials,-1)[first_trial:][:,summary_interval],axis=1)
 
     X , y = [], []
