@@ -61,7 +61,7 @@ def generate_dataset(osn_data_dir, which_label, first_trial=5, start_time = 0.1,
 
     n_osn = set(df_params.n_osn.values)
     assert len(n_osn) == 1, f"Expected exactly one value for n_osn, found {len(n_osn)}."
-    n_osn = list(dt)[0]
+    n_osn = list(n_osn)[0]
     print(f"{n_osn=}")
     
     t_trial = set(df_params.t_trial.values)
