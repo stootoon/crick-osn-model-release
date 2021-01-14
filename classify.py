@@ -13,7 +13,7 @@ logger.setLevel(logging.INFO)
 base_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(base_dir, "data")
 
-get_output_root = lambda osn_data_dir: os.path.join(data_dir, "decoding-delay-conc", os.path.normpath(osn_data_dir).split("/")[-1])
+get_output_root = lambda osn_data_dir: os.path.join(data_dir, "decoding-ppi-conc", os.path.normpath(osn_data_dir).split("/")[-1])
 
 
 from sklearn.svm import LinearSVC
@@ -89,7 +89,7 @@ def generate_dataset(osn_data_dir, which_label, first_trial=5, start_time = 0.1,
     logger.info(f"Corresponding slice {summary_interval.start}-{summary_interval.stop}")
     
     label_fun   = {"conc":       lambda pat, amp: f"{int(100*amp)}", 
-                   "delay.conc": lambda pat, amp: "{}.{:03d}".format("10" if "g" in pat else "25", int(100*amp))}[which_label]
+                   "ppi.conc": lambda pat, amp: "{}.{:03d}".format("10" if "g" in pat else "25", int(100*amp))}[which_label]
 
     logger.info(f"Raising counts to the power of {ca2exp:1.3f} before applying Ca2 filter.")        
     logger.info(f"Ca2 filter time constant = {ca2tau:1.3f} seconds.")
@@ -201,7 +201,7 @@ if __name__ == "__main__":
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument("osn_data_dir",       type=str,                     help="Root folder containing the data for each glomerulus")
-    parser.add_argument("--delay",            action="store_true",          help="Whether to decode delay and concentration instead of just concentration")
+    parser.add_argument("--ppi",            action="store_true",          help="Whether to decode PPI and concentration instead of just concentration")
     parser.add_argument("--shuf",             action="store_true",          help="Whether to compute the shuffled performance")
     parser.add_argument("--gridcv_verbosity", type=int,   default=0,        help="Verbosity of GridSearchCV.")
     for popt in parser_opts:
@@ -218,10 +218,10 @@ if __name__ == "__main__":
     subdir="_".join(non_defaults) if len(non_defaults) else "default"
     print(f"Using {subdir=}")
 
-    name = f"{'delay.' if args.delay else ''}conc_{'shuf' if args.shuf else 'orig'}"
+    name = f"{'ppi.' if args.ppi else ''}conc_{'shuf' if args.shuf else 'orig'}"
     print(f"{name=}")
     
-    which_label = "conc" if not args.delay else "delay.conc"
+    which_label = "conc" if not args.ppi else "ppi.conc"
 
     output_root = get_output_root(args.osn_data_dir)
     print(f"{output_root=}")
@@ -232,7 +232,7 @@ if __name__ == "__main__":
         print(f"{output_dir} not found, creating.")
         os.makedirs(output_dir, exist_ok = True)
 
-    input_file = os.path.join(output_dir, f"{'delay.' if args.delay else ''}conc.input.p")
+    input_file = os.path.join(output_dir, f"{'ppi.' if args.ppi else ''}conc.input.p")
     print(f"{input_file=}")
     
     if not os.path.isfile(input_file):
