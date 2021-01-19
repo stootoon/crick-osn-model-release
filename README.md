@@ -1,5 +1,5 @@
 # Model for olfactory sensory neurons 
-This repository contains the code to generate the data and produce figures X of Ackels et al. 2021.
+This repository contains the code to generate the data and produce figures X of Ackels et al. (under review).
 ## Generating data for multiple glomeruli
 1. Generate the parameters by running ```python gen_osn_model_params.py --outputdir model-osn-data/gamp5 --glom_amp 5```
 2. Run the model for each of the parameter settings by ```cd model-osn-data/gamp5; python run_for_params.py params0.json```
