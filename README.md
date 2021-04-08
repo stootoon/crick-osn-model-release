@@ -7,8 +7,9 @@ The steps below describe how the data for each analysis can be generated from sc
 3. Unpack the data file to yield a `data` folder.
 4. Move this folder into the **installation root**. It should now sit at the same level as the `README.md` file.
 ## Generating data for multiple glomeruli
-1. Generate the parameters by running ```python gen_osn_model_params.py --outputdir model-osn-data/gamp5 --glom_amp 5```
-2. Run the model for each of the parameter settings by ```cd model-osn-data/gamp5; python run_for_params.py params0.json```
+1. Create a `data` folder in the **installation root**.
+1. Generate the parameters by running ```python gen_osn_model_params.py --outputdir data/model-osn-data/gamp5 --glom_amp 5```
+2. Run the model for each of the parameter settings by ```cd data/model-osn-data/gamp5; python run_for_params.py params0.json```
 
 The folder `model-osn-data/gamp5` now contains one folder for each parameter json file, containing the spike counts.
 ## Decoding PPI using different numbers of glomeruli
