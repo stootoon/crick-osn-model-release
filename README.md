@@ -39,5 +39,4 @@ Classifying PPI and concentration is run by calling the code in `classify.py` di
 - For example, the results of runs with `--ca2exp 1`  will be written to `data/decoding-ppi-conc/gamp5/ca2exp1.0`
 ### Plot the data
 To plot the figures showing PPI and concentration decoding performance, run the notebook `make_figure_decoding_ppi_conc.ipynb`.
-
-
+Make sure that the `params` variable set early in the notebook reflects the parameter settings you actually used. If you used the default parameters, then set `params` to `default`. If like in the example above, you changed the Ca2 exponent, set `params` to `ca2exp1.0`, and so on.
