@@ -1,7 +1,7 @@
 # Model for olfactory sensory neurons 
-This repository contains the code to generate the data and produce the plots for Extended Data Figure 1 of Ackels et al. (under review).
-## Setup
-To install the code and data,
+This repository contains the code to generate the data and produce the plots for Extended Data Figure 1 of Ackels et al. (under review). 
+## Loading precomputed data
+The steps below describe how the data for each analysis can be generated from scratch. Alternatively, precomputed data can be downloaded and installed as follows:
 1. Download the code repository and unpack at your desired **installation root**.
 2. Download the data from [this](https://www.dropbox.com/s/pncq56d4evnx7v4/crick-osn-model-release-data.tar.gz?dl=0) link (~250 MB).
 3. Unpack the data file to yield a `data` folder.
