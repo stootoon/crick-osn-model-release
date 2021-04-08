@@ -1,5 +1,6 @@
 # Model for olfactory sensory neurons 
-This repository contains the code to generate the data and produce the plots for Extended Data Figure 1 of Ackels et al. (under review). 
+This repository contains the code to generate the data and produce the plots for Extended Data Figure 1 of Ackels et al. (under review).
+The code was developed and tested using Python 3.8 on macOS High Sierra and CentOS Linux 7.
 ## Loading precomputed data
 The steps below describe how the data for each analysis can be generated from scratch. Alternatively, precomputed data can be downloaded and installed as follows:
 1. Download the code repository and unpack at your desired **installation root**.
@@ -9,7 +10,7 @@ The steps below describe how the data for each analysis can be generated from sc
 ## Generating data for multiple glomeruli
 1. Create a `data` folder in the **installation root**.
 1. Generate the parameters by running ```python gen_osn_model_params.py --outputdir data/model-osn-data/gamp5 --glom_amp 5```
-2. Run the model for each of the parameter settings by ```cd data/model-osn-data/gamp5; python run_for_params.py params0.json```
+2. Run the model for each of the parameter settings by ```cd data/model-osn-data/gamp5; python ../../../run_for_params.py params0.json```
 
 The folder `data/model-osn-data/gamp5` now contains one folder for each parameter json file, containing the spike counts.
 ## Decoding PPI using different numbers of glomeruli
