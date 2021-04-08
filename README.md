@@ -27,7 +27,7 @@ The folder `data/model-osn-data/gamp5` now contains one folder for each paramete
 Run the notebook `make_figure_decoding_ppi.ipynb` to produce the figure showing decoding accuracy vs # glomeruli used.
 ## Decoding PPI and concentration using all glomeruli
 ### Generate the data
-Classifying PPI and concentration is run by calling the code in `classify.py` directly.
+Classifying PPI and concentration is run by calling the code in `classify.py` directly from **installation root**.
 - To run concentration decoding on a dataset, say `gamp5`, run `python classify.py data/model-osn-data/gamp5`
 - To run PPI and concentration decoding, use the `--ppi` flag: `python classify.py data/model-osn-data/gamp5 --ppi`
 - To run the shuffled setting, add `--shuf`, e.g. flag: `python classify.py data/model-osn-data/gamp5 --ppi --shuf`
