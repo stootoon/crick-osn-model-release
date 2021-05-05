@@ -1,5 +1,5 @@
 # Model for olfactory sensory neurons 
-This repository contains the code to generate the data and produce the plots for Extended Data Figure 1 of Ackels et al. (under review).
+This repository contains the code to generate the data and produce the plots for Extended Data Figure 1 of [Ackels et al. 2021](https://www.nature.com/articles/s41586-021-03514-2).
 The code was developed and tested using Python 3.8 on macOS High Sierra and CentOS Linux 7.
 ## Loading precomputed data
 The steps below describe how the data for each analysis can be generated from scratch. Alternatively, precomputed data can be downloaded and installed as follows:
